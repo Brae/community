@@ -14,20 +14,38 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from lib.cuckoo.common.abstracts import Signature
+import re
 
 class PDFJavaScript(Signature):
     name = "pdf_javascript"
     description = "The PDF file contains JavaScript code"
     severity = 2
+    confidence = 2
     categories = ["static"]
     authors = ["Kevin Ross"]
     minimum = "2.0"
+
+    re_annots = [
+        r"[']{0,}g[ '+]{1,}e[ '+]{0,}t[ '+]{0,}A[ '+]{0,}(n[ '+]{0,}){2}o[ '+]{0,}t[ '+]{0,}s[ '+]{0,}",
+        r"[']{0,}s[ '+]{0,}y[ '+]{0,}n[ '+]{0,}c[ '+]{0,}A[ '+]{0,}n[ '+]{0,}n[ '+]{0,}o[ '+]{0,}t[ '+]{0,}S[ '+]{0,}c[ '+]{0,}a[ '+]{0,}n[ '+]{0,}"
+    ]
+
 
     def on_complete(self):
         for pdf in self.get_results("static", {}).get("pdf", {}):
             if "javascript" in pdf and len(pdf["javascript"]) > 0:
                 for js in pdf["javascript"]:
-                    self.mark_ioc("Javascript code", js["beautified"])
+                    for re_ex in self.re_annots:
+                        mtch = re.search(re_ex, js["beautified"])
+                        if mtch:
+                            self.severity = 3
+                            self.confidence = 4
+                            self.description = "The PDF file contains \
+								JavaScript with functions commonly used \
+								for obfuscation/exploitation"
+                            self.mark_ioc("Javascript code", js["beautified"])
+                        else:
+                            self.mark_ioc("Javascript code", js["beautified"])
                 return True
 
 class PDFAttachments(Signature):
