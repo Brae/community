@@ -19,8 +19,8 @@ import re
 class PDFJavaScript(Signature):
     name = "pdf_javascript"
     description = "The PDF file contains JavaScript code"
-    severity = 2
-    confidence = 2
+    severity = 3
+    confidence = 3
     categories = ["static"]
     authors = ["Kevin Ross"]
     minimum = "2.0"
@@ -67,6 +67,7 @@ class PDFOpenAction(Signature):
     name = "pdf_openaction"
     description = "The PDF file contains an open action"
     severity = 2
+    confidence = 2
     categories = ["static"]
     authors = ["FDD @ Cuckoo Sandbox"]
     minimum = "2.0"
@@ -81,6 +82,7 @@ class PDFOpenActionJS(Signature):
     name = "pdf_openaction_js"
     description = "The PDF open action contains JavaScript code"
     severity = 3
+    confidence = 3
     categories = ["static"]
     authors = ["FDD @ Cuckoo Sandbox"]
     minimum = "2.0"
