@@ -6,7 +6,7 @@ from lib.cuckoo.common.abstracts import Signature
 
 class APT_CloudAtlas(Signature):
     name = "apt_cloudatlas"
-    description = "Creates known CloudAtlas APT files, registry keys and/or mutexes"
+    description = "Creates known CloudAtlas APT files"
     severity = 3
     categories = ["apt"]
     families = ["cloudatlas"]

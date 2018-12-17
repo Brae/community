@@ -79,26 +79,28 @@ class MartianCommandProcess(Signature):
     name = "martian_command_process"
     description = "A command shell or script process was created by an unexpected parent process"
     severity = 3
+	confidence = 2
     categories = ["martian", "exploit", "dropper"]
-    authors = ["Cuckoo Technologies", "Will Metcalf", "Kevin Ross"]
+    authors = ["Cuckoo Technologies", "Will Metcalf", "Kevin Ross", "Brae"]
     minimum = "2.0"
+	
+	# Used to be whitelisted like above, but resulted in 0 triggers across thousands of samples. Removed whitelist and included process name in output to help with quick identification
+	# Also seems to make more sense to catch all commands executed, regardless of the source. Have refactored the whitelist into priority_procs, to bump up the confidence 
 
-    whitelist_procs = [
-        "acrord32.exe",
-        "acrord64.exe",
-        "chrome.exe",
-        "cscript.exe",
+	priority_procs = [
+		"acrord32.exe",
+		"acrord64.exe",
+		"chrome.exe",
         "excel.exe",
         "firefox.exe",
         "iexplore.exe",
         "outlook.exe",
         "powerpnt.exe",
-        "powershell.exe",
         "winword.exe",
         "wordview.exe",
-        "wscript.exe"
         "wspub.exe"
     ]
+						
 
     cmd_procs = [
         "cmd.exe",
@@ -106,21 +108,26 @@ class MartianCommandProcess(Signature):
         "cscript",
         "powershell",
         "wscript"
+		"excel.exe",
+
     ]
 
     def on_complete(self):
-        for process in self.get_results("behavior", {}).get("generic", []):
-            if process["process_name"].lower() not in self.whitelist_procs:
-                continue
-
-            for cmdline in process.get("summary", {}).get("command_line", []):
-               pname = process["process_name"].lower()
-               if cmdline != "":
-                   for cmd in self.cmd_procs:
-                       if cmdline.startswith(cmd):
-                           self.mark(
-                               parent_process=pname,
-                               martian_process=cmdline,
-                           )
-
-        return self.has_marks()
+		for process in self.get_results("behavior", {}).get("generic", []):
+			for cmdline in process.get("summary", {}).get("command_line", []):
+				pname = process["process_name"]
+				if cmdline != "":
+					for cmd in self.cmd_procs:
+						if cmdline.startswith(cmd):
+							for priority_proc in self.priority_procs:
+								if pname.lower() == priority_proc:
+									self.confidence = 3
+									self.description = readable + "starts command-line interpreter for command execution"
+								else:
+									self.description = pname + " starts command-line interpreter for command execution"
+							
+							self.mark(
+								parent_process = pname,
+								martian_process = cmdline
+							)
+		return self.has_marks()
