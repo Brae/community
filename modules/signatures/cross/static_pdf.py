@@ -19,20 +19,16 @@ import re
 class PDFJavaScript(Signature):
     name = "pdf_javascript"
     description = "The PDF file contains JavaScript code"
-    severity = 2
+    severity = 3
+    confidence = 3
     categories = ["static"]
     authors = ["Kevin Ross"]
     minimum = "2.0"
 
-	re_annots = [
-		# getAnnots
-		r"[']{0,}g[ '+]{1,}e[ '+]{0,}t[ '+]{0,}A[ '+]{0,}(n[ '+]{0,}){2} \ 
-		o[ '+]{0,}t[ '+]{0,}s[ '+]{0,}",
-		#syncAnnotScan
-		r"[']{0,}s[ '+]{0,}y[ '+]{0,}n[ '+]{0,}c[ '+]{0,}A[ '+]{0,}n[ '+]{0,} \
-		n[ '+]{0,}o[ '+]{0,}t[ '+]{0,}S[ '+]{0,}c[ '+]{0,}a[ '+]{0,}n[ '+]{0,}"
-	]
-
+    re_annots = [
+        r"[']{0,}g[ '+]{1,}e[ '+]{0,}t[ '+]{0,}A[ '+]{0,}(n[ '+]{0,}){2}o[ '+]{0,}t[ '+]{0,}s[ '+]{0,}",
+        r"[']{0,}s[ '+]{0,}y[ '+]{0,}n[ '+]{0,}c[ '+]{0,}A[ '+]{0,}n[ '+]{0,}n[ '+]{0,}o[ '+]{0,}t[ '+]{0,}S[ '+]{0,}c[ '+]{0,}a[ '+]{0,}n[ '+]{0,}"
+    ]
 
     def on_complete(self):
         for pdf in self.get_results("static", {}).get("pdf", {}):
@@ -69,6 +65,7 @@ class PDFOpenAction(Signature):
     name = "pdf_openaction"
     description = "The PDF file contains an open action"
     severity = 2
+    confidence = 2
     categories = ["static"]
     authors = ["FDD @ Cuckoo Sandbox"]
     minimum = "2.0"
@@ -83,6 +80,7 @@ class PDFOpenActionJS(Signature):
     name = "pdf_openaction_js"
     description = "The PDF open action contains JavaScript code"
     severity = 3
+    confidence = 3
     categories = ["static"]
     authors = ["FDD @ Cuckoo Sandbox"]
     minimum = "2.0"
