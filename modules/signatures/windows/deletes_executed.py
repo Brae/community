@@ -20,19 +20,26 @@ class DeletesExecutedFiles(Signature):
     description = "Deletes executed files from disk"
     severity = 3
     categories = ["persistence", "stealth"]
-    authors = ["Optiv", "Kevin Ross"]
+    authors = ["Optiv", "Kevin Ross", "Brae"]
     minimum = "2.0"
     evented = True
+
+    string_substitutions = {
+        "ADMINI~1":"Administrator"
+    }
 
     def on_complete(self):
         processes = []
         for process in self.get_results("behavior", {}).get("generic", []):
             for cmdline in process.get("summary", {}).get("command_line", []):
+                for k,v in self.string_substitutions.iteritems():
+                    cmdline = cmdline.replace(k,v)
                 processes.append(cmdline)
 
         if processes:
             for deletedfile in self.get_files(actions=["file_deleted"]):
-                if deletedfile in processes[0]:
-                    self.mark_ioc("file", deletedfile)
+                for process in processes:
+                    if deletedfile in process:
+                        self.mark_ioc("file", deletedfile)
 
         return self.has_marks()
