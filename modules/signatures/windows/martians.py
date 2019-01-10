@@ -98,7 +98,8 @@ class MartianCommandProcess(Signature):
         "powerpnt.exe",
         "winword.exe",
         "wordview.exe",
-        "wspub.exe"
+        "wspub.exe",
+        "excel.exe"
     ]
 						
 
@@ -108,8 +109,6 @@ class MartianCommandProcess(Signature):
         "cscript",
         "powershell",
         "wscript"
-		"excel.exe",
-
     ]
 
     def on_complete(self):

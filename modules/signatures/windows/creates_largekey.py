@@ -45,7 +45,7 @@ class CreatesLargeKey(Signature):
                 if length > 16 * 1024:
                     for whitelist in self.whitelist:
                         if not re.match(whitelist, call["arguments"]["regkey"]):    
-                            self.mark_call()
+                            self.mark_ioc(call["arguments"]["regkey"], call["arguments"]["value"])
 
     def on_complete(self):
         return self.has_marks()
