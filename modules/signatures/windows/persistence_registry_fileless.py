@@ -31,7 +31,7 @@ class PersistenceRegistryJavaScript(Signature):
         if not isinstance(value, basestring):
             return
         if value and "javascript:" in value:
-            self.mark_call()
+            self.mark(reg_key=call["arguments"]["regkey"],reg_value=value)
 
     def on_complete(self):
         return self.has_marks()
@@ -52,7 +52,7 @@ class PersistenceRegistryEXE(Signature):
         if not isinstance(value, basestring):
             return
         if value.startswith("MZ"):
-            self.mark_call()
+            self.mark(reg_key=call["arguments"]["regkey"],reg_value=value)
 
     def on_complete(self):
         return self.has_marks()
@@ -73,7 +73,7 @@ class PersistenceRegistryPowershell(Signature):
         if not isinstance(value, basestring):
             return
         if "powershell " in value or "powershell.exe" in value:
-            self.mark_call()
+            self.mark(reg_key=call["arguments"]["regkey"],reg_value=value)
 
     def on_complete(self):
         return self.has_marks()
