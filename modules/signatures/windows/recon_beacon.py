@@ -17,7 +17,7 @@ from lib.cuckoo.common.abstracts import Signature
 
 class Recon_Beacon(Signature):
     name = "recon_beacon"
-    description = "A process performed obfuscation on information about the computer or sent it to a remote location indicative of CnC Traffic/Preperations."
+    description = "A process performed obfuscation on information about the computer or sent it to a remote location indicative of CnC Traffic/Preparations."
     weight = 2
     severity = 3
     categories = ["network", "recon"]
