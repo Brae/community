@@ -30,7 +30,11 @@ class ModifiesDesktopWallpaper(Signature):
 
     def on_complete(self):
         for indicator in self.regkeys_re:
-            for regkey in self.check_key(pattern=indicator, regex=True, actions=["regkey_written"], all=True):
+            # Bit of a hacky bypass for the detection issues with RegSetValue as observed with WannaCry samples
+            # For the moment, just checks all registry keys regardless of whether the access was a write operation or not
+            
+            # for regkey in self.check_key(pattern=indicator, regex=True, actions=["regkey_written"], all=True):
+            for regkey in self.check_key(pattern=indicator, regex=True, actions=None, all=True):
                 self.mark_ioc("registry", regkey)
 
         return self.has_marks()
