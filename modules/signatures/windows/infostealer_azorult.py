@@ -1,6 +1,7 @@
 from lib.cuckoo.common.abstracts import Signature
 
 import re
+import urllib
 
 class InfostealerAzorultNetwork(Signature):
     name = "infostealer_azorult_network"
@@ -26,9 +27,10 @@ class InfostealerAzorultNetwork(Signature):
                 if http['user-agent'] == self.user_agent:
                     self.mark_ioc("network", http['uri'])
                 # Extract request data and decrypt for infected user 'ID'
-                body = http['body']
+                body = http['body'].decode('string_escape')
                 for key in self.keys:
                     plaintext = self.decrypt_req(body, key)
+                    plaintext = urllib.unquote(plaintext)
                     if re.match(r".*([A-Z0-9]{8}-){4}", plaintext):
                         self.mark_ioc("checkin", plaintext)
                     
