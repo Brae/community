@@ -24,8 +24,11 @@ class InfostealerAzorultNetwork(Signature):
     def on_complete(self):
         for http in self.get_results("network", {}).get("http", []):
             if http['method'] == "POST" and "index.php" in http['uri']:
-                if http['user-agent'] == self.user_agent:
-                    self.mark_ioc("network", http['uri'])
+                try:
+                    if http['user-agent'] == self.user_agent:
+                        self.mark_ioc("network", http['uri'])
+                except KeyError:
+                    pass
                 # Extract request data and decrypt for infected user 'ID'
                 body = http['body'].decode('string_escape')
                 for key in self.keys:
